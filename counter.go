@@ -17,6 +17,20 @@ var bits = map[int]bool{
 	2:  false,
 	1:  false,
 }
+
+/**
+66 - 64
+65 - 32
+46 - 16
+26 - 8
+44 - 4
+68 - 2
+67 - 1
+*/
+// var pins = map[int]int{
+// 	64
+// }
+
 var counter int = 0
 
 func main() {
@@ -29,18 +43,15 @@ func main() {
 	}
 }
 
-func decompose(num int) {
+func decompose(num int) []bool {
+	var binary []bool
 	var calc = num
 	for calc != 0 {
-		for _, v := range sortedKeys(bits) {
-			if calc >= v {
-				bits[v] = true
-				calc = calc - v
-			} else {
-				bits[v] = false
-			}
-		}
+		binary = append(binary, calc%2 != 0)
+		calc = calc / 2
 	}
+
+	return binary
 }
 
 func sortedKeys(m map[int]bool) []int {
