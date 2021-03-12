@@ -2,13 +2,12 @@ package main
 
 import (
 	"fmt"
-	"sort"
 	"time"
 
 	"github.com/ajesk/beagle-counter/gpio"
 )
 
-var bits = map[int]bool{
+var defaultBits = map[int]bool{
 	64: false,
 	32: false,
 	16: false,
@@ -18,18 +17,15 @@ var bits = map[int]bool{
 	1:  false,
 }
 
-/**
-66 - 64
-65 - 32
-46 - 16
-26 - 8
-44 - 4
-68 - 2
-67 - 1
-*/
-// var pins = map[int]int{
-// 	64
-// }
+var pins = map[int]int{
+	64: 66,
+	32: 65,
+	16: 46,
+	8:  26,
+	4:  44,
+	2:  68,
+	1:  67,
+}
 
 var counter int = 0
 
@@ -37,13 +33,22 @@ func main() {
 	for {
 		time.Sleep(1 * time.Second)
 		fmt.Printf("\n%d\t", counter)
-		decompose(counter)
+		binary := toBinary(counter)
+		bits := flipBits(binary)
+		fmt.Print(bits)
 		disperseValues()
 		counter++
 	}
 }
 
-func decompose(num int) []bool {
+func increment() {
+	counter++
+	if counter > 255 {
+		counter = 0
+	}
+}
+
+func toBinary(num int) []bool {
 	var binary []bool
 	var calc = num
 	for calc != 0 {
@@ -54,19 +59,26 @@ func decompose(num int) []bool {
 	return binary
 }
 
-func sortedKeys(m map[int]bool) []int {
-	keys := make([]int, len(m))
-	i := 0
-	for k := range m {
-		keys[i] = k
-		i++
+func flipBits(binary []bool) map[int]bool {
+	bitSet := copyBits()
+	count := 1
+	for _, bit := range binary {
+		bitSet[count] = bit
+		count *= 2
 	}
-	sort.Sort(sort.Reverse(sort.IntSlice(keys)))
-	return keys
+	return bitSet
+}
+
+func copyBits() (copy map[int]bool) {
+	copy = map[int]bool{}
+	for k, v := range defaultBits {
+		copy[k] = v
+	}
+	return copy
 }
 
 func disperseValues() {
-	for k, v := range bits {
+	for k, v := range defaultBits {
 		if v {
 			fmt.Printf("%d ", k)
 		}
