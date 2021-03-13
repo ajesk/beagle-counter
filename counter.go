@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/ajesk/beagle-counter/gpio"
+	"gpio"
 )
 
 var defaultBits = map[int]bool{
@@ -17,14 +17,14 @@ var defaultBits = map[int]bool{
 	1:  false,
 }
 
-var pins = map[int]int{
-	64: 66,
-	32: 65,
-	16: 46,
-	8:  26,
-	4:  44,
-	2:  68,
-	1:  67,
+var pins = map[int]string{
+	64: "66",
+	32: "65",
+	16: "46",
+	8:  "26",
+	4:  "44",
+	2:  "68",
+	1:  "67",
 }
 
 var counter int = 0
@@ -35,8 +35,8 @@ func main() {
 		fmt.Printf("\n%d\t", counter)
 		binary := toBinary(counter)
 		bits := flipBits(binary)
-		fmt.Print(bits)
-		disperseValues()
+		// fmt.Print(bits)
+		disperseValues(bits)
 		counter++
 	}
 }
@@ -77,16 +77,13 @@ func copyBits() (copy map[int]bool) {
 	return copy
 }
 
-func disperseValues() {
-	for k, v := range defaultBits {
-		if v {
-			fmt.Printf("%d ", k)
-		}
+func disperseValues(bits map[int]bool) {
+	for k, v := range bits {
+		setGpio(pins[k], v)
 	}
 }
 
-func setGpio() {
-	pins := gpio.GPIO{}
-
-	pins.Pin("2")
+func setGpio(pin string, value bool) {
+	gpio := gpio.GPIO{}
+	gpio.Pin(pin).SetDirection(value)
 }

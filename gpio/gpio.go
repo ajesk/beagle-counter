@@ -34,22 +34,25 @@ func (r GPIOPin) write(where, what string) GPIOPin {
 	return r
 }
 
-// Output sets a given pin to out
-func (r GPIOPin) Output() GPIOPin {
+// output sets a given pin to out
+func (r GPIOPin) output() GPIOPin {
 	return r.write("direction", "out")
 }
 
-// Input sets a given pin to in
-func (r GPIOPin) Input() GPIOPin {
-	return r.write("direction", "in")
+func (r GPIOPin) SetDirection(direction bool) {
+	if direction {
+		r.output().high()
+	} else {
+		r.output().low()
+	}
 }
 
 // High sets pin to high
-func (r GPIOPin) High() GPIOPin {
+func (r GPIOPin) high() GPIOPin {
 	return r.write("value", "1")
 }
 
 // Low sets pin to low
-func (r GPIOPin) Low() GPIOPin {
+func (r GPIOPin) low() GPIOPin {
 	return r.write("value", "0")
 }
