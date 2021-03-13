@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"time"
 
 	"gpio"
@@ -32,10 +31,8 @@ var counter int = 0
 func main() {
 	for {
 		time.Sleep(1 * time.Second)
-		fmt.Printf("\n%d\t", counter)
 		binary := toBinary(counter)
 		bits := flipBits(binary)
-		// fmt.Print(bits)
 		disperseValues(bits)
 		counter++
 	}
